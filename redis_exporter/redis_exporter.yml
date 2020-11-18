@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: redis-exporter
+subsets:
+- addresses:
+  - ip: ip
+  ports:
+  - port: 9121
+    name: redisex
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-exporter
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 9121
+    targetPort: 9121
+    name: redisex
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: prometheus
+    prometheus: prometheus
+  name: redis
+spec:
+  endpoints:
+  - interval: 10s
+    path: /metrics
+    targetPort: 9121
+    port: redisex
+  jobLabel: k8s-app
+  namespaceSelector:
+    matchNames:
+    - default
+  selector:
+    matchLabels:
+      app: redis
+      
