@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-19 10:26:11
- * @LastEditTime: 2020-11-19 10:46:36
+ * @LastEditTime: 2020-11-19 11:24:23
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/pkg/monitoring/register.go
@@ -17,16 +17,16 @@ import (
 	"net/http"
 
 	"github.com/emicklei/go-restful"
-	"github.com/emicklei/go-restful-openapi"
+	restfulspec "github.com/emicklei/go-restful-openapi"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
+
+//http://localhost:9090/kapis/monitoring.kube.io/v1alpha2/redis
 
 const (
 	GroupName = "monitoring.kube.io"
 	RespOK    = "ok"
 )
-
-const KeyOpenAPITags = "openapi.tags"
 
 var GroupVersion = schema.GroupVersion{Group: GroupName, Version: "v1alpha2"}
 
