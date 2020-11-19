@@ -1,15 +1,15 @@
 /*
  * @Author: ferried
  * @Email: harlancui@outlook.com
- * @Date: 2020-11-18 11:08:26
- * @LastEditTime: 2020-11-18 11:08:48
+ * @Date: 2020-11-19 11:12:55
+ * @LastEditTime: 2020-11-19 11:15:05
  * @LastEditors: ferried
  * @Description: Basic description
- * @FilePath: /redis-prometheus-dashboard/prometheus/prometheus_res.go
+ * @FilePath: /redis-prometheus-dashboard/pkg/types/types.go
  * @LICENSE: Apache-2.0
  */
 
-package prometheus
+package types
 
 // APIResponse Prometheus query api response
 type APIResponse struct {

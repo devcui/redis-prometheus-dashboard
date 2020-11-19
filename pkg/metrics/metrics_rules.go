@@ -1,17 +1,16 @@
 /*
-*@Author:ferried
-*@Email:harlancui@outlook.com
-*@Date:2020-11-1811:39:11
- * @LastEditTime: 2020-11-18 14:02:59
+ * @Author: ferried
+ * @Email: harlancui@outlook.com
+ * @Date: 2020-11-18 11:39:11
+ * @LastEditTime: 2020-11-19 10:01:08
  * @LastEditors: ferried
-*@Description:Basicdescription
+ * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/metrics/metrics_rules.go
-*@LICENSE:Apache-2.0
-*/
-
+ * @LICENSE: Apache-2.0
+ */
 package metrics
 
-var metricsPromqlMap = map[string]string{
+var redisMetrics = map[string]string{
 	"redis_active_defrag_running":                     "redis_active_defrag_running",
 	"redis_aof_current_rewrite_duration_sec":          "redis_aof_current_rewrite_duration_sec",
 	"redis_aof_enabled":                               "redis_aof_enabled",

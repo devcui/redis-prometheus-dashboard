@@ -2,21 +2,21 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-18 10:55:40
- * @LastEditTime: 2020-11-18 11:30:32
+ * @LastEditTime: 2020-11-19 10:30:26
  * @LastEditors: ferried
  * @Description: Basic description
- * @FilePath: /redis-prometheus-dashboard/prometheus/options.go
+ * @FilePath: /redis-prometheus-dashboard/pkg/client/prometheus/options.go
  * @LICENSE: Apache-2.0
  */
 
 package prometheus
 
 import (
-	"ferried/redis-prometheus-dashboard/env"
+	"ferried/redis-prometheus-dashboard/pkg/env"
 	"os"
 )
 
-// PrometheusOptions prometheus option
+// PrometheusOptions ..
 type PrometheusOptions struct {
 	Endpoint          string `json:"endpoint,omitempty" yaml:"endpoint"`
 	SecondaryEndpoint string `json:"secondaryEndpoint,omitempty" yaml:"secondaryEndpoint"`

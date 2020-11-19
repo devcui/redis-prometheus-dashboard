@@ -2,16 +2,17 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-18 11:04:25
- * @LastEditTime: 2020-11-18 11:34:50
+ * @LastEditTime: 2020-11-19 10:55:55
  * @LastEditors: ferried
  * @Description: Basic description
- * @FilePath: /redis-prometheus-dashboard/prometheus/prometheus.go
+ * @FilePath: /redis-prometheus-dashboard/pkg/client/prometheus/prometheus.go
  * @LICENSE: Apache-2.0
  */
 
 package prometheus
 
 import (
+	"ferried/redis-prometheus-dashboard/pkg/types"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -21,8 +22,19 @@ import (
 	"k8s.io/klog"
 )
 
+// Prometheus export prometheus
+var Client *PrometheusClient
+
 // ConfigCompatibleWithStandardLibrary tries to be 100% compatible with standard library behavior
 var jsonIter = jsoniter.ConfigCompatibleWithStandardLibrary
+
+func init() {
+	if Client == nil {
+		o := NewPrometheusOptions()
+		p, _ := NewPrometheusClient(o)
+		Client = p
+	}
+}
 
 // PrometheusClient request to prometheus to query data
 type PrometheusClient struct {
@@ -43,7 +55,7 @@ func NewPrometheusClient(options *PrometheusOptions) (*PrometheusClient, error) 
 }
 
 // query query metrics from the prometheus
-func (c *PrometheusClient) query(endpoint string, queryType string, params string) (apiResponse APIResponse) {
+func (c *PrometheusClient) query(endpoint string, queryType string, params string) (apiResponse types.APIResponse) {
 	url := fmt.Sprintf("%s/api/v1/%s?%s", endpoint, queryType, params)
 
 	response, err := c.client.Get(url)
@@ -71,12 +83,12 @@ func (c *PrometheusClient) query(endpoint string, queryType string, params strin
 	return apiResponse
 }
 
-// QueryToSPrometheus use endpoint to query
-func (c *PrometheusClient) QueryToSPrometheus(queryType string, params string) (apiResponse APIResponse) {
+// QueryToK8SPrometheus use endpoint to query
+func (c *PrometheusClient) QueryToK8SPrometheus(queryType string, params string) (apiResponse types.APIResponse) {
 	return c.query(c.endpoint, queryType, params)
 }
 
-// QueryToSystemPrometheus use secondaryEndpoint to query
-func (c *PrometheusClient) QueryToSystemPrometheus(queryType string, params string) (apiResponse APIResponse) {
+// QueryToK8SSystemPrometheus use secondaryEndpoint to query
+func (c *PrometheusClient) QueryToK8SSystemPrometheus(queryType string, params string) (apiResponse types.APIResponse) {
 	return c.query(c.secondaryEndpoint, queryType, params)
 }
