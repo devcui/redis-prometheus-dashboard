@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-19 10:35:02
- * @LastEditTime: 2020-11-19 10:54:37
+ * @LastEditTime: 2020-11-19 18:06:24
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/pkg/monitoring/monitoring.go
@@ -22,8 +22,7 @@ import (
 // MonitorRedis ..
 func MonitorRedis(request *restful.Request, response *restful.Response) {
 	r := ParseRequestParams(request)
-	var res *metrics.Response
-	res = metrics.GetRedisMetrics(r)
+	res := metrics.GetRedisMetrics(r)
 	response.WriteAsJson(res)
 }
 

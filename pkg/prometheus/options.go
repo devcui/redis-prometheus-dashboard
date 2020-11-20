@@ -2,10 +2,10 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-18 10:55:40
- * @LastEditTime: 2020-11-19 10:30:26
+ * @LastEditTime: 2020-11-19 14:26:06
  * @LastEditors: ferried
  * @Description: Basic description
- * @FilePath: /redis-prometheus-dashboard/pkg/client/prometheus/options.go
+ * @FilePath: /redis-prometheus-dashboard/pkg/prometheus/options.go
  * @LICENSE: Apache-2.0
  */
 
@@ -39,16 +39,5 @@ func (s *PrometheusOptions) InstallConfig() {
 	}
 	if send := os.Getenv(env.PROMETHEUS_SECONDARY_ENDPOINT); send != "" {
 		s.SecondaryEndpoint = send
-	}
-}
-
-// ApplyTo apply options to s
-func (s *PrometheusOptions) ApplyTo(options *PrometheusOptions) {
-	if s.Endpoint != "" {
-		options.Endpoint = s.Endpoint
-	}
-
-	if s.SecondaryEndpoint != "" {
-		options.SecondaryEndpoint = s.SecondaryEndpoint
 	}
 }

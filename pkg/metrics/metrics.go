@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-19 09:15:34
- * @LastEditTime: 2020-11-19 11:17:00
+ * @LastEditTime: 2020-11-20 17:13:32
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/pkg/metrics/metrics.go
@@ -23,7 +23,6 @@ var jsonIter = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // GetRedisMetrics ..
 func GetRedisMetrics(params RequestParams) *Response {
-	client := prometheus.Client
 	ch := make(chan APIResponse, ChannelMaxCapacity)
 	var wg sync.WaitGroup
 
@@ -39,7 +38,7 @@ func GetRedisMetrics(params RequestParams) *Response {
 					v[key] = value
 				}
 				v.Set("query", exp)
-				response := client.QueryToK8SPrometheus(params.QueryType, v.Encode())
+				response := prometheus.Client.QueryToK8SPrometheus(params.QueryType, v.Encode())
 				ch <- APIResponse{
 					MetricName:  metricName,
 					APIResponse: response,
@@ -57,7 +56,7 @@ func GetRedisMetrics(params RequestParams) *Response {
 	}
 
 	return &Response{
-		MetricsLevel: MonitorLevelCluster,
+		MetricsLevel: MonitorLevelRedis,
 		Results:      apiResponse,
 	}
 }

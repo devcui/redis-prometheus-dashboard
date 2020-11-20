@@ -2,10 +2,10 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-18 11:04:25
- * @LastEditTime: 2020-11-19 10:55:55
+ * @LastEditTime: 2020-11-19 18:04:16
  * @LastEditors: ferried
  * @Description: Basic description
- * @FilePath: /redis-prometheus-dashboard/pkg/client/prometheus/prometheus.go
+ * @FilePath: /redis-prometheus-dashboard/pkg/prometheus/prometheus.go
  * @LICENSE: Apache-2.0
  */
 
@@ -16,7 +16,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	jsoniter "github.com/json-iterator/go"
 	"k8s.io/klog"
@@ -47,7 +46,7 @@ type PrometheusClient struct {
 func NewPrometheusClient(options *PrometheusOptions) (*PrometheusClient, error) {
 	return &PrometheusClient{
 		client: &http.Client{
-			Timeout: 10 * time.Second,
+			// Timeout: 10 * time.Second,
 		},
 		endpoint:          options.Endpoint,
 		secondaryEndpoint: options.SecondaryEndpoint,
