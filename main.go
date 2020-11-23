@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-17 13:54:42
- * @LastEditTime: 2020-11-19 11:24:43
+ * @LastEditTime: 2020-11-23 11:21:36
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/main.go
@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/emicklei/go-restful"
 	"k8s.io/klog"
 )
 
@@ -29,6 +30,13 @@ func CreateAPIServer(s *server.ServerRunOptions) error {
 	var err error
 
 	container := runtime.Container
+	cors := restful.CrossOriginResourceSharing{
+		ExposeHeaders:  []string{"X-My-Header"},
+		AllowedHeaders: []string{"Content-Type", "Accept", "Authorization"},
+		AllowedMethods: []string{"GET", "POST", "DELETE", "UPDATE", "OPTIONS", "PUT"},
+		CookiesAllowed: true,
+		Container:      container}
+	container.Filter(cors.Filter)
 	container.DoNotRecover(false)
 	container.Filter(server.Logging)
 	container.RecoverHandler(server.LogStackOnRecover)
