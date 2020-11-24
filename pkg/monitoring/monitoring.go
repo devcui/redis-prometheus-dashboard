@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-19 10:35:02
- * @LastEditTime: 2020-11-19 18:06:24
+ * @LastEditTime: 2020-11-24 09:16:29
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/pkg/monitoring/monitoring.go
@@ -29,10 +29,11 @@ func MonitorRedis(request *restful.Request, response *restful.Response) {
 // ParseRequestParams ..
 func ParseRequestParams(request *restful.Request) metrics.RequestParams {
 	var requestParams metrics.RequestParams
-	// queryTime := strings.Trim(request.QueryParameter("time"), " ")
-	// start := strings.Trim(request.QueryParameter("start"), " ")
-	// end := strings.Trim(request.QueryParameter("end"), " ")
-	// step := strings.Trim(request.QueryParameter("step"), " ")
+
+	queryTime := strings.Trim(request.QueryParameter("time"), " ")
+	start := strings.Trim(request.QueryParameter("start"), " ")
+	end := strings.Trim(request.QueryParameter("end"), " ")
+	step := strings.Trim(request.QueryParameter("step"), " ")
 	sortMetric := strings.Trim(request.QueryParameter("sort_metric"), " ")
 	sortType := strings.Trim(request.QueryParameter("sort_type"), " ")
 	pageNum := strings.Trim(request.QueryParameter("page"), " ")
@@ -79,6 +80,23 @@ func ParseRequestParams(request *restful.Request) metrics.RequestParams {
 	}
 
 	v := url.Values{}
+
+	if start != "" && end != "" { // range query
+		// metrics from a deleted namespace should be hidden
+		v.Set("start", start)
+		v.Set("end", end)
+		if step == "" {
+			v.Set("step", metrics.DefaultQueryStep)
+		} else {
+			v.Set("step", step)
+		}
+		requestParams.QueryParams = v
+		requestParams.QueryType = metrics.RangeQuery
+
+		return requestParams
+	} else if queryTime != "" { // query
+		v.Set("time", queryTime)
+	}
 
 	requestParams.QueryParams = v
 	requestParams.QueryType = metrics.Query

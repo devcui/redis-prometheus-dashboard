@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-18 11:04:25
- * @LastEditTime: 2020-11-19 18:04:16
+ * @LastEditTime: 2020-11-23 18:18:20
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/pkg/prometheus/prometheus.go
@@ -56,7 +56,7 @@ func NewPrometheusClient(options *PrometheusOptions) (*PrometheusClient, error) 
 // query query metrics from the prometheus
 func (c *PrometheusClient) query(endpoint string, queryType string, params string) (apiResponse types.APIResponse) {
 	url := fmt.Sprintf("%s/api/v1/%s?%s", endpoint, queryType, params)
-
+	fmt.Println(url)
 	response, err := c.client.Get(url)
 	if err != nil {
 		klog.Error(err)
