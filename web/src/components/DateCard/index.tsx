@@ -39,11 +39,11 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
     }
   };
 
-  const onStepSelectChange = async (value: any) => {
-    await setState({ ...state, step: value });
+  const onStepSelectChange = (value: any) => {
+    setState({ ...state, step: value });
   };
 
-  const onOk = async () => {
+  const onOk = () => {
     if (!state.start || !state.end) {
       message.info("请选择开始日期和截止日期!");
       return;
@@ -51,12 +51,13 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
     const queryTime = parseInt(
       ((state.end - state.start) / state.step).toFixed(0)
     );
-    await setState({ ...state, queryTime });
-    await props.completed(state);
+    const newState = { ...state, queryTime };
+    setState(newState);
+    props.completed(newState);
   };
 
-  const onCancel = async () => {
-    await setState(InitDateCardState());
+  const onCancel = () => {
+    setState(InitDateCardState());
   };
 
   return (
