@@ -16,6 +16,8 @@
   "license": "MIT",
   "dependencies": {
     "@ant-design/icons": "^4.3.0",
+    "@antv/data-set": "^0.11.7",
+    "@antv/g2": "^4.0.15",
     "@babel/core": "^7.12.3",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.5",

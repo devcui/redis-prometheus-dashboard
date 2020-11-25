@@ -65,6 +65,7 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
       <Space size="small" direction="vertical">
         <div>时间段</div>
         <RangePicker
+          allowClear={false}
           suffixIcon={<CalendarTwoTone />}
           value={[moment(state.start * 1000), moment(state.end * 1000)]}
           showTime={{ format: "HH:mm:ss" }}
