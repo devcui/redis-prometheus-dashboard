@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-25 09:52:05
- * @LastEditTime: 2020-11-26 16:23:58
+ * @LastEditTime: 2020-11-26 16:38:58
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/docs/antv.md
@@ -478,7 +478,7 @@ const kView = chart.createView({
   },
 });
 
-kView.Schema().position()
+kView.Schema().position();
 
 const barView = chart.createView({
   region: {
@@ -487,22 +487,81 @@ const barView = chart.createView({
   },
 });
 
-barView.Schema().line()
+barView.Schema().line();
 ```
 
 ## 坐标系
 
-- cartesian / rect	笛卡尔坐标系，G2 默认的坐标系。	chart.coordinate('rect')  或 chart.coordinate('cartesian')
-- polar	极坐标系，角度和半径构建成的二维坐标系。	chart.coordinate('polar') 
-- helix	螺旋坐标系，基于阿基米德螺旋线。	chart.coordinate('helix') 
-- theta	一种特殊的极坐标系，半径长度固定，仅仅将数据映射到角度，常用于饼图的绘制。	chart.coordinate('theta')  或者 chart.coordinate('polar').transpose() 
+- cartesian / rect 笛卡尔坐标系，G2 默认的坐标系。 chart.coordinate('rect') 或 chart.coordinate('cartesian')
+- polar 极坐标系，角度和半径构建成的二维坐标系。 chart.coordinate('polar')
+- helix 螺旋坐标系，基于阿基米德螺旋线。 chart.coordinate('helix')
+- theta 一种特殊的极坐标系，半径长度固定，仅仅将数据映射到角度，常用于饼图的绘制。 chart.coordinate('theta') 或者 chart.coordinate('polar').transpose()
 
 ### 坐标系变换
 
-- rotate: 按照坐标系中心旋转 chart.coordinate().rotate(-Math.PI * 0.25); 
+- rotate: 按照坐标系中心旋转 chart.coordinate().rotate(-Math.PI \* 0.25);
 
-- scale: 缩放,按照坐标系中心缩放 chart.coordinate('rect').scale(0.7, 1.2); 
+- scale: 缩放,按照坐标系中心缩放 chart.coordinate('rect').scale(0.7, 1.2);
 
-- transpose: x，y 轴置换，例如柱状图转换成水平柱状图（条形图） chart.coordinate('rect').transpose(); 
+- transpose: x，y 轴置换，例如柱状图转换成水平柱状图（条形图） chart.coordinate('rect').transpose();
 
 - reflect: 镜像，沿 x 方向镜像或者沿 y 轴方向映射 chart.coordinate().reflect('x'); chart.coordinate().reflect('y');
+
+### 属性
+
+- start 坐标系的起始点。
+- end 坐标系的结束点。
+
+### 方法
+
+- convert(point) 将数据从 0-1 空间映射到画布空间。
+- invert(point) 将数据从画布空间反转回 0-1 空间。
+- translate(x,y) 平移。
+- rotate(angle) 旋转。
+- scale(sx,sy) 方法、缩小。
+- transpose() x、y 交换。
+- reflect('x'|'y') 沿着 x 或者 y 进行镜像变换。
+
+### 极坐标的特殊属性
+
+- radius 半径长度，0-1 范围内的数值，最终的半径长度 = min(长，宽) / 2 \* radius。
+- innerRadius plus 坐标系下，内部空白的半径大小，空白的半径 = min(长，宽) / 2 \* inner。
+- startAngle 极坐标的起始角度。
+- endAngle 极坐标的结束角度。
+
+## 数据调整
+
+- stack(层叠），将同一个分类的数据值累加起来。以层叠的柱状图为例，x 轴方向的同一个分类下面的数据，按照顺序，将 y 轴对应的值累加，最终将数据调整的不再重叠。
+
+- jitter(扰动散开），将数据的位置轻微的调整，使得映射后的图形位置不再重叠。
+
+- dodge(分组散开），将同一个分类的数据进行分组在一个范围内均匀分布。
+
+- symmetric(数据对称），使得生成的图形居中对齐。
+  对于各种数据调整我们从以下几个方面介绍：
+
+```typescript
+chart
+  .interval()
+  .position("State*population")
+  .color("age", (age) => {
+    return colorMap[age];
+  })
+  .tooltip("age*population", (age, population) => {
+    return {
+      name: age,
+      value: population,
+    };
+  })
+  // 调整数据
+  .adjust([
+    {
+      type: "dodge",
+      dodgeBy: "type", // 按照 type 字段进行分组
+      marginRatio: 0, // 分组中各个柱子之间不留空隙
+    },
+    {
+      type: "stack",
+    },
+  ]);
+```
