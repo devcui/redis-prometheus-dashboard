@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-25 09:52:05
- * @LastEditTime: 2020-11-25 17:06:44
+ * @LastEditTime: 2020-11-26 16:23:58
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/docs/antv.md
@@ -190,36 +190,36 @@ chart.legent("x", {
 ```typescript
 // 展示 Tooltip 辅助线
 chart.tooltip({
-  showCrosshairs: true, 
+  showCrosshairs: true,
 });
 
 // 散点图在xy辅助线上显示数据
 chart.tooltip({
   showCrosshairs: true,
   crosshairs: {
-    type: 'xy',
+    type: "xy",
     text: (type, defaultText, items) => {
       const color = items[0].color;
-      if (type === 'x') {
+      if (type === "x") {
         return {
           offset: 5,
-          position: 'end',
-          content: defaultText + ' cm',
+          position: "end",
+          content: defaultText + " cm",
           style: {
-            textAlign: 'center',
-            textBaseline: 'top',
+            textAlign: "center",
+            textBaseline: "top",
             fontSize: 14,
-            fontWeight: 'bold',
+            fontWeight: "bold",
           },
         };
       }
       return {
         offset: 5,
-        content: defaultText + ' kg',
+        content: defaultText + " kg",
         style: {
-          textAlign: 'end',
+          textAlign: "end",
           fontSize: 14,
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       };
     },
@@ -233,30 +233,27 @@ chart.tooltip({
   showCrosshairs: true, // 展示 crosshairs
   crosshairs: {
     // 配置 crosshairs 样式
-    type: 'xy', // crosshairs 类型
+    type: "xy", // crosshairs 类型
     line: {
       // crosshairs 线样式
       style: {
-        stroke: '#565656',
+        stroke: "#565656",
         lineDash: [4],
       },
     },
   },
 });
-
 ```
 
 ## 文本标签
 
 ```typescript
 // 使用label将数值标注在chart上
-chart
-  .line()
-  .position('year*value')
-  .label('value');
+chart.line().position("year*value").label("value");
 ```
 
 ### 文本标签类型
+
 - base 默认类型
 - interval 几何标记下所有图形的文本标注
 - pie 饼图文本标注
@@ -264,36 +261,248 @@ chart
 
 ### 三种文本布局方案
 
-- overlap label防遮挡,四周偏移剔除放不下的label
-- fixedOverlap 不改变label位置情况下对相互重叠的label进行调整
-- limitlnShape 剔除容纳不了的label
+- overlap label 防遮挡,四周偏移剔除放不下的 label
+- fixedOverlap 不改变 label 位置情况下对相互重叠的 label 进行调整
+- limitlnShape 剔除容纳不了的 label
 
 ```typescript
 chart
   .polygon()
-  .position('longitude*latitude')
-  .label('name', {
+  .position("longitude*latitude")
+  .label("name", {
     layout: {
       // this
-      type: 'fixed-overlap',
+      type: "fixed-overlap",
     },
     offset: 0,
     style: {
-      fill: 'black',
-      stroke: '#fff',
+      fill: "black",
+      stroke: "#fff",
       lineWidth: 2,
     },
   });
 ```
 
-## 辅助标记 Annotation
+## 图形标注
 
-当需要在图表上绘制一些辅助线、辅助框或者图片时，比如增加平均值线、最高值线或者标示明显的范围区域时，可以使用辅助标记 annotation。
+标注类型
 
-## 缩略轴 Slider
+- arc 辅助弧线
+- image 图片
+- line 辅助线
+- text 辅助文字
+- region 辅助框
+- regionFilter 区域着色
+- dataMarker 数据点标注
+- dataRegion 特殊区间标注
 
-当图表中数据量比较多，用户希望关注数据集中在某个特殊区域的时候，可以使用缩略轴组件。缩略轴较适用于折线图。
+```typescript
+// 语法
+chart.annotation().<type>({})
+// 清空
+chart.annotation().clear()
+// 清空图形标注和配置
+chart.annotation().clear(true)
+```
 
-## 滚动条 Scrollbar
+## 滑块
 
-当图表中数据量比较多多，也可以适用滚动条组件来一次只浏览一部分数据。滚动条组件提供水平滚动条、和垂直滚动条。滚动条组件较适用于柱形图和条形图。
+数据范围的选择插件
+
+```typescript
+chart.option("slider", {
+  end: 0.8,
+});
+```
+
+## 滚动条
+
+```typescript
+chart.option("scrollbar", {
+  // 滚动条类型： 'horizontal' / 'vertical'
+  type: "horizontal",
+});
+```
+
+## 几何图形
+
+图表类型
+
+- point 点图
+  - 'circle'
+  - 'square'
+  - 'bowtie'
+  - 'diamond'
+  - 'hexagon'
+  - 'triangle'
+  - 'triangle-down'
+  - 'hollow-circle'
+  - 'hollow-square'
+  - 'hollow-bowtie'
+  - 'hollow-diamond'
+  - 'hollow-hexagon'
+  - 'hollow-triangle'
+  - 'hollow-triangle-down'
+  - 'cross'
+  - 'tick'
+  - 'plus'
+  - 'hyphen'
+- 'line'
+  - 'line'
+  - 'dot'
+  - 'dash'
+  - 'smooth'
+  - 'hv'
+  - 'vh'
+  - 'hvh'
+  - 'vhv'
+- path 路径图
+- area 区域图
+  - 'area'
+  - 'smooth'
+  - 'line'
+  - 'smooth-line'
+- interval 区间图
+  - 'rect'
+  - 'hollow-rect'
+  - 'line'
+  - 'tick'
+  - 'funnel
+  - 'pyramid'
+- polygon 多边形
+  - 'polygon'
+- heatmap 热力图
+- schema 自定义
+  - 'box'
+  - 'candle'
+
+## 交互语法
+
+# 交互过程
+
+将交互拆分为几个环节
+
+- 示能 表示交互可以被出发
+- 开始 start:交互开始
+- 持续 processing:交互持续
+- 结束 end:交互结束
+- 暂停 pause:交互暂停
+- 回滚 rollback: 取消交互,恢复初始状态
+
+每个环节拆分为两步
+
+- 触发
+  - 对象: 操作图表的对象
+  - 事件: 鼠标移入，移出
+- 反馈
+  - 对象: 被操作的图表
+  - 结果: 反馈对象发生的变化,鼠标变化,图表样式变化,数据变化
+
+## 上下文
+
+- 当前进行的交互有哪些交互环节,正在执行到哪一步,哪一步已经完成
+- 当前对象,容器的状态
+
+## 约束
+
+### 同一交互环节顺序约束
+
+初始状态->交互状态->新状态->交互回滚  
+初始状态->交互状态->持续交互->新状态->交互回滚  
+初始状态->交互状态->持续交互->交互取消->交互回滚
+
+### 不同交互间的约束
+
+1.相同的触发,不同的反馈
+
+- 框选过滤图形交互：触发——鼠标移入 view，反馈——鼠标变成“十字”；触发——拖拽，反馈——出现框选 mask；
+- 拖拽 view 交互：触发——鼠标移入 view ，反馈——鼠标变成”手型“，触发——拖拽，反馈—— view 移动。
+
+  2.不同的触发,相同的反馈
+
+- 点击 view 的绘图区域交互：触发——点击，反馈——显示临近的图形的 tooltip；
+- 在 view 的绘图区域移动交互：触发——移动，反馈——显示临近图形的 tooltip。
+
+## 规范
+
+### 触发 - Trigger
+
+触发对象主要有
+
+- 图表:chart
+- 子视图:view
+- 容器的状态量: selectedElements,cursorInfo
+- Element 名称: interval,line,point,area
+- Element 内部的图形元素的名称: line-label， point-label 等
+- 组件的名称：legend, axis, annotation
+- 组件的组成部分: legend-item, annotaion-line
+
+语法
+
+一个触发 Trigger 是对象名称与事件名称的组合
+
+```typescript
+interval: click;
+```
+
+### 反馈 — Action
+
+#### Action 对象
+
+Action 对触发进行响应,Action 的对象必须与前面的对象触发关联
+
+- 可以是前面触发的对象，
+- 也可以是位置信息计算出来的对象，
+- 还可以是触发对象关联的其他对象
+
+#### Action 结果
+
+反馈的结果，无法直接用 name + method 来定义，可以在回调函数中指定，为了组合成交互语法，每个 Action 可以事先定义，在交互语法中直接指定 Action 名称即可。
+
+## 视图
+
+组合多个视图(图表)为一个图表
+
+```typescript
+const chart = new Chart({
+  container: "container",
+  autoFit: true,
+  height: 400,
+  padding: [10, 40, 40, 40],
+});
+
+const kView = chart.createView({
+  region: {
+    start: { x: 0, y: 0 },
+    end: { x: 1, y: 0.7 },
+  },
+});
+
+kView.Schema().position()
+
+const barView = chart.createView({
+  region: {
+    start: { x: 0, y: 0.7 },
+    end: { x: 1, y: 1 },
+  },
+});
+
+barView.Schema().line()
+```
+
+## 坐标系
+
+- cartesian / rect	笛卡尔坐标系，G2 默认的坐标系。	chart.coordinate('rect')  或 chart.coordinate('cartesian')
+- polar	极坐标系，角度和半径构建成的二维坐标系。	chart.coordinate('polar') 
+- helix	螺旋坐标系，基于阿基米德螺旋线。	chart.coordinate('helix') 
+- theta	一种特殊的极坐标系，半径长度固定，仅仅将数据映射到角度，常用于饼图的绘制。	chart.coordinate('theta')  或者 chart.coordinate('polar').transpose() 
+
+### 坐标系变换
+
+- rotate: 按照坐标系中心旋转 chart.coordinate().rotate(-Math.PI * 0.25); 
+
+- scale: 缩放,按照坐标系中心缩放 chart.coordinate('rect').scale(0.7, 1.2); 
+
+- transpose: x，y 轴置换，例如柱状图转换成水平柱状图（条形图） chart.coordinate('rect').transpose(); 
+
+- reflect: 镜像，沿 x 方向镜像或者沿 y 轴方向映射 chart.coordinate().reflect('x'); chart.coordinate().reflect('y');
