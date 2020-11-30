@@ -1,6 +1,6 @@
 import { DatePicker, Select, Space, Button, Card, message } from "antd";
 import { ClockCircleTwoTone, CalendarTwoTone } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import lodash from "lodash";
 import moment from "moment";
 
@@ -15,6 +15,7 @@ export interface DateCardState {
   end: number;
   queryTime: number;
   step: number;
+  reset: boolean;
 }
 
 export const InitDateCardState = (): DateCardState => {
@@ -23,18 +24,24 @@ export const InitDateCardState = (): DateCardState => {
     end: new Date().getTime() / 1000,
     queryTime: 24,
     step: 3600,
+    reset: false,
   });
 };
 
 const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
   const [state, setState] = useState<DateCardState>(InitDateCardState());
 
-  const onRangePickerChange = (value: any, dateString: Array<string>) => {
+  useEffect(() => {
+    props.completed(state);
+  }, [state]);
+
+  const onRangePickerChange = (_: any, dateString: Array<string>) => {
     if (dateString.length >= 1) {
       setState({
         ...state,
         start: new Date(dateString[0]).getTime() / 1000,
         end: new Date(dateString[1]).getTime() / 1000,
+        reset: false,
       });
     }
   };
@@ -43,21 +50,8 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
     setState({ ...state, step: value });
   };
 
-  const onOk = () => {
-    if (!state.start || !state.end) {
-      message.info("请选择开始日期和截止日期!");
-      return;
-    }
-    const queryTime = parseInt(
-      ((state.end - state.start) / state.step).toFixed(0)
-    );
-    const newState = { ...state, queryTime };
-    setState(newState);
-    props.completed(newState);
-  };
-
   const onCancel = () => {
-    setState(InitDateCardState());
+    setState(lodash.merge(InitDateCardState(), { reset: true }));
   };
 
   return (
@@ -90,11 +84,8 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
             <Option value={7200}>2小时</Option>
             <Option value={18000}>5小时</Option>
           </Select>
-          <Button type="primary" size="middle" onClick={onOk}>
-            确定
-          </Button>
           <Button type="primary" size="middle" onClick={onCancel}>
-            重置
+            实时监控
           </Button>
         </Space>
       </Space>
