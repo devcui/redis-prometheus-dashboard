@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-23 15:28:22
- * @LastEditTime: 2020-11-23 17:37:27
+ * @LastEditTime: 2020-12-01 10:05:30
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/web/src/utils/redis_metrics.ts
@@ -10,19 +10,29 @@
  */
 
 import { Metric } from "./metrics"
+import lodash from 'lodash'
 
 export type RedisMetricHandler = (metric: Metric) => RedisMetric | Array<RedisMetric>
 export interface RedisMetricHandlerMap {
     [key: string]: RedisMetricHandler
 }
 export interface RedisMetric {
+    endpoint: string
+    instance: string
+    namespace: string
     name: string
-    value: Array<number>
+    value: Array<RedisMetricValue>
 }
+
+export interface RedisMetricValue {
+    time: number;
+    value: any;
+}
+
 
 export const METRICS_MAP: RedisMetricHandlerMap = {
     // 碎片整理
-    "redis_active_defrag_running": (metric: Metric) => { return { name: "asd", value: [123] } },
+    // "redis_active_defrag_running": null,
     // "redis_aof_current_rewrite_duration_sec": null,
     // "redis_aof_enabled": null,
     // "redis_aof_last_bgrewrite_status": null,
@@ -46,7 +56,32 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
     // "redis_cpu_sys_children_seconds_total": null,
     // "redis_cpu_sys_seconds_total": null,
     // "redis_cpu_user_children_seconds_total": null,
-    // "redis_cpu_user_seconds_total": null,
+    "redis_cpu_user_seconds_total": (metric: Metric) => {
+        let res: RedisMetric = {
+            endpoint: "",
+            instance: "",
+            namespace: "",
+            name: "",
+            value: []
+        }
+        const pointObj: Array<any> = lodash.at(metric, 'result[0].metric')
+        if (pointObj && pointObj.length > 0) {
+            res.endpoint = pointObj[0].endpoint
+            res.instance = pointObj[0].instance
+            res.name = pointObj[0].__name__
+            res.namespace = pointObj[0].namespace
+        }
+        const values: Array<Array<any>> = lodash.at(metric, 'result[0].values')
+        if (values && values.length > 0) {
+            values[0].forEach((v: Array<any>, i: number) => {
+                res.value.push({
+                    time: v[0],
+                    value: v[1]
+                })
+            })
+        }
+        return res
+    },
     // "redis_db_avg_ttl_seconds": null,
     // "redis_db_keys": null,
     // "redis_db_keys_expiring": null,

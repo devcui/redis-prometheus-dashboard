@@ -1,7 +1,8 @@
-import { clear } from "console";
 import React, { useEffect, useState } from "react";
 import DateCard, { DateCardState } from "../../components/DateCard";
 import { http, HTTP_METHODS, makeParam } from "../../utils/http";
+import { METRICS_MAP, RedisMetric } from "../../utils/redis_metrics";
+import { Row, Col, Divider, Card } from "antd";
 
 export interface DashboardProps {}
 
@@ -16,7 +17,9 @@ const Dashboard: React.FC<DashboardProps> = () => {
       method: HTTP_METHODS.GET,
       body: null,
     }).subscribe((response: any) => {
-      console.log(response);
+      console.log("once;");
+      const chartData = handleData(response);
+      console.log(chartData);
     });
   };
 
@@ -26,7 +29,9 @@ const Dashboard: React.FC<DashboardProps> = () => {
       method: HTTP_METHODS.GET,
       body: null,
     }).subscribe((response: any) => {
-      console.log(response);
+      console.log("now");
+      const chartData = handleData(response);
+      console.log(chartData);
     });
   };
 
@@ -42,7 +47,28 @@ const Dashboard: React.FC<DashboardProps> = () => {
     }
   };
 
-  return <DateCard completed={dataChange} />;
+  const handleData = (response: any): RedisMetric | Array<RedisMetric> => {
+    return response.results
+      .map((m: any) => {
+        if (METRICS_MAP[m.metric_name]) {
+          return METRICS_MAP[m.metric_name](m.data);
+        }
+      })
+      .filter((v: any) => v != undefined);
+  };
+
+  return (
+    <Card>
+      <Row gutter={16}>
+        <Col span={10} push={14}>
+          <DateCard completed={dataChange} />
+        </Col>
+      </Row>
+      <Row gutter={16}>
+          
+      </Row>
+    </Card>
+  );
 };
 
 export default Dashboard;

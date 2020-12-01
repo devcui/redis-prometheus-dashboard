@@ -1,5 +1,6 @@
 import { Breadcrumb, Layout } from "antd";
 import React from "react";
+import { SHOW_HEADER } from "../../../env";
 import Navigation from "../navigation/Navigation";
 import "./index.less";
 
@@ -10,14 +11,17 @@ const BaseLayout: React.FC<BaseLayoutProps> = (props) => {
   return (
     <>
       <Layout className="layout">
-        <Header>
-          <Navigation />
-        </Header>
+        {SHOW_HEADER && (
+          <Header>
+            <Navigation />
+          </Header>
+        )}
+
         <Content style={{ padding: "0 50px" }}>
           <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
+            {/* <Breadcrumb.Item>Home</Breadcrumb.Item>
             <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
+            <Breadcrumb.Item>App</Breadcrumb.Item> */}
           </Breadcrumb>
           <div className="site-layout-content">{props.children}</div>
         </Content>

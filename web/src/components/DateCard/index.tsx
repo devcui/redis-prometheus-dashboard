@@ -50,8 +50,12 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
     setState({ ...state, step: value });
   };
 
-  const onCancel = () => {
+  const realTime = () => {
     setState(lodash.merge(InitDateCardState(), { reset: true }));
+  };
+
+  const onCancel = () => {
+    setState(lodash.merge(InitDateCardState(), { reset: false }));
   };
 
   return (
@@ -84,9 +88,15 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
             <Option value={7200}>2小时</Option>
             <Option value={18000}>5小时</Option>
           </Select>
-          <Button type="primary" size="middle" onClick={onCancel}>
-            实时监控
-          </Button>
+          {state.reset ? (
+            <Button type="primary" size="middle" onClick={onCancel}>
+              停止监控
+            </Button>
+          ) : (
+            <Button type="primary" size="middle" onClick={realTime}>
+              实时监控
+            </Button>
+          )}
         </Space>
       </Space>
     </Card>
