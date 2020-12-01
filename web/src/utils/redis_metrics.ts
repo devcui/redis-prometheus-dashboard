@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-23 15:28:22
- * @LastEditTime: 2020-12-01 10:05:30
+ * @LastEditTime: 2020-12-01 16:26:39
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/web/src/utils/redis_metrics.ts
@@ -12,20 +12,23 @@
 import { Metric } from "./metrics"
 import lodash from 'lodash'
 
-export type RedisMetricHandler = (metric: Metric) => RedisMetric | Array<RedisMetric>
+export type RedisMetricHandler = (metric: Metric) => RedisMetrics
 export interface RedisMetricHandlerMap {
     [key: string]: RedisMetricHandler
+}
+export interface RedisMetrics {
+    [key: string]: RedisMetric
 }
 export interface RedisMetric {
     endpoint: string
     instance: string
     namespace: string
-    name: string
     value: Array<RedisMetricValue>
+    component?: React.Component
 }
 
 export interface RedisMetricValue {
-    time: number;
+    time: any;
     value: any;
 }
 
@@ -61,14 +64,12 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
             endpoint: "",
             instance: "",
             namespace: "",
-            name: "",
-            value: []
+            value: [],
         }
         const pointObj: Array<any> = lodash.at(metric, 'result[0].metric')
         if (pointObj && pointObj.length > 0) {
             res.endpoint = pointObj[0].endpoint
             res.instance = pointObj[0].instance
-            res.name = pointObj[0].__name__
             res.namespace = pointObj[0].namespace
         }
         const values: Array<Array<any>> = lodash.at(metric, 'result[0].values')
@@ -76,11 +77,11 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
             values[0].forEach((v: Array<any>, i: number) => {
                 res.value.push({
                     time: v[0],
-                    value: v[1]
+                    value: v[1] as number
                 })
             })
         }
-        return res
+        return { "redis_cpu_user_seconds_total": res }
     },
     // "redis_db_avg_ttl_seconds": null,
     // "redis_db_keys": null,

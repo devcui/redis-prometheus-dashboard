@@ -66,6 +66,7 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
           allowClear={false}
           suffixIcon={<CalendarTwoTone />}
           value={[moment(state.start * 1000), moment(state.end * 1000)]}
+          disabled={state.reset}
           showTime={{ format: "HH:mm:ss" }}
           format="YYYY-MM-DD HH:mm:ss"
           onChange={onRangePickerChange}
