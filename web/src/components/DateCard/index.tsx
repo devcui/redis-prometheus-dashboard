@@ -1,4 +1,13 @@
-import { DatePicker, Select, Space, Button, Card, message } from "antd";
+import {
+  DatePicker,
+  Select,
+  Space,
+  Button,
+  Card,
+  message,
+  Row,
+  Col,
+} from "antd";
 import { ClockCircleTwoTone, CalendarTwoTone } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import lodash from "lodash";
@@ -7,74 +16,54 @@ import moment from "moment";
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-export interface DateCardProp {
-  completed: (d: DateCardState) => void;
+export interface DateCardProps {
+  keeping: boolean;
+  complete: (state: DateCardState) => void;
 }
 export interface DateCardState {
-  start: number;
-  end: number;
-  queryTime: number;
-  step: number;
-  reset: boolean;
+  start?: number;
+  end?: number;
+  step?: number;
 }
 
-export const InitDateCardState = (): DateCardState => {
-  return lodash.cloneDeep({
-    start: new Date().getTime() / 1000 - 24 * 60 * 60,
-    end: new Date().getTime() / 1000,
-    queryTime: 24,
-    step: 3600,
-    reset: false,
-  });
-};
+const DateCard: React.FC<DateCardProps> = ({ complete, keeping }) => {
+  const [state, setState] = useState<DateCardState>();
 
-const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
-  const [state, setState] = useState<DateCardState>(InitDateCardState());
-
-  useEffect(() => {
-    props.completed(state);
-  }, [state]);
-
-  const onRangePickerChange = (_: any, dateString: Array<string>) => {
+  const dateChange = (_: any, dateString: Array<string>) => {
     if (dateString.length >= 1) {
-      setState({
-        ...state,
-        start: new Date(dateString[0]).getTime() / 1000,
-        end: new Date(dateString[1]).getTime() / 1000,
-        reset: false,
-      });
+      const start = new Date(dateString[0]).getTime() / 1000;
+      const end = new Date(dateString[1]).getTime() / 1000;
+      setState(lodash.merge(state, { start, end }));
+      if (state) complete(state);
     }
   };
-
-  const onStepSelectChange = (value: any) => {
-    setState({ ...state, step: value });
-  };
-
-  const realTime = () => {
-    setState(lodash.merge(InitDateCardState(), { reset: true }));
-  };
-
-  const onCancel = () => {
-    setState(lodash.merge(InitDateCardState(), { reset: false }));
+  const onStepSelectChange = (v: any) => {
+    setState(lodash.merge(state, { step: v }));
+    if (state) complete(state);
   };
 
   return (
-    <Card>
-      <Space size="small" direction="vertical">
-        <div>时间段</div>
+    <Row gutter={16}>
+      <Col span={10}>
         <RangePicker
+          disabled={keeping}
           allowClear={false}
           suffixIcon={<CalendarTwoTone />}
-          value={[moment(state.start * 1000), moment(state.end * 1000)]}
-          disabled={state.reset}
+          value={
+            state?.start && state?.end
+              ? [moment(state.start * 1000), moment(state.end * 1000)]
+              : null
+          }
+          format="YYYY/MM/DD HH:mm:ss"
           showTime={{ format: "HH:mm:ss" }}
-          format="YYYY-MM-DD HH:mm:ss"
-          onChange={onRangePickerChange}
+          onChange={dateChange}
         />
-        <div>时间间隔</div>
+      </Col>
+      <Col span={10}>
         <Space size="small">
           <Select
-            value={state.step}
+            disabled={keeping}
+            value={state?.step}
             style={{ width: 240 }}
             onChange={onStepSelectChange}
             suffixIcon={<ClockCircleTwoTone />}
@@ -89,18 +78,9 @@ const DateCard: React.FC<DateCardProp> = (props: DateCardProp) => {
             <Option value={7200}>2小时</Option>
             <Option value={18000}>5小时</Option>
           </Select>
-          {state.reset ? (
-            <Button type="primary" size="middle" onClick={onCancel}>
-              停止监控
-            </Button>
-          ) : (
-            <Button type="primary" size="middle" onClick={realTime}>
-              实时监控
-            </Button>
-          )}
         </Space>
-      </Space>
-    </Card>
+      </Col>
+    </Row>
   );
 };
 
