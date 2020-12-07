@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-23 15:28:22
- * @LastEditTime: 2020-12-01 16:26:39
+ * @LastEditTime: 2020-12-05 09:34:33
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/web/src/utils/redis_metrics.ts
@@ -12,7 +12,7 @@
 import { Metric } from "./metrics"
 import lodash from 'lodash'
 
-export type RedisMetricHandler = (metric: Metric) => RedisMetrics
+export type RedisMetricHandler = (metric: Metric) => RedisMetric
 export interface RedisMetricHandlerMap {
     [key: string]: RedisMetricHandler
 }
@@ -81,7 +81,7 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
                 })
             })
         }
-        return { "redis_cpu_user_seconds_total": res }
+        return res
     },
     // "redis_db_avg_ttl_seconds": null,
     // "redis_db_keys": null,
