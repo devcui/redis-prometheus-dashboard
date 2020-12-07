@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-23 15:28:22
- * @LastEditTime: 2020-12-07 09:37:24
+ * @LastEditTime: 2020-12-07 16:58:49
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/web/src/utils/redis_metrics.ts
@@ -59,30 +59,7 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
     // "redis_cpu_sys_children_seconds_total": null,
     // "redis_cpu_sys_seconds_total": null,
     // "redis_cpu_user_children_seconds_total": null,
-    "redis_cpu_user_seconds_total": (metric: Metric) => {
-        let res: RedisMetric = {
-            endpoint: "",
-            instance: "",
-            namespace: "",
-            value: [],
-        }
-        const pointObj: Array<any> = lodash.at(metric, 'result[0].metric')
-        if (pointObj && pointObj.length > 0) {
-            res.endpoint = pointObj[0].endpoint
-            res.instance = pointObj[0].instance
-            res.namespace = pointObj[0].namespace
-        }
-        const values: Array<Array<any>> = lodash.at(metric, 'result[0].values')
-        if (values && values.length > 0) {
-            values[0].forEach((v: Array<any>, i: number) => {
-                res.value.push({
-                    time: v[0],
-                    value: parseFloat(v[1])
-                })
-            })
-        }
-        return res
-    },
+    "redis_cpu_user_seconds_total": metric => simpleMetricHandle(metric),
     // "redis_db_avg_ttl_seconds": null,
     // "redis_db_keys": null,
     // "redis_db_keys_expiring": null,
@@ -109,10 +86,10 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
     // "redis_master_repl_offset": null,
     // "redis_mem_fragmentation_ratio": null,
     // "redis_memory_max_bytes": null,
-    // "redis_memory_used_bytes": null,
+    "redis_memory_used_bytes": m => simpleMetricHandle(m),
     // "redis_memory_used_bytesredis_memory_max_bytes": null,
     // "redis_memory_used_dataset_bytes": null,
-    // "redis_memory_used_lua_bytes": null,
+    "redis_memory_used_lua_bytes": m => simpleMetricHandle(m),
     // "redis_memory_used_overhead_bytes": null,
     // "redis_memory_used_peak_bytes": null,
     // "redis_memory_used_rss_bytes": null,
@@ -147,4 +124,39 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
     // "redis_target_scrape_request_errors_total": null,
     // "redis_up": null,
     // "redis_uptime_in_seconds": null,
+}
+
+const simpleMetricHandle = (metric: Metric): RedisMetric => {
+    let res: RedisMetric = {
+        endpoint: "",
+        instance: "",
+        namespace: "",
+        value: [],
+    }
+    const pointObj: Array<any> = lodash.at(metric, 'result[0].metric')
+    if (pointObj && pointObj.length > 0) {
+        if (pointObj[0]) {
+            if (pointObj[0].endpoint) {
+                res.endpoint = pointObj[0].endpoint
+            }
+            if (pointObj[0].instance) {
+                res.instance = pointObj[0].instance
+            }
+            if (pointObj[0].namespace) {
+                res.namespace = pointObj[0].namespace
+            }
+        }
+    }
+    const values: Array<Array<any>> = lodash.at(metric, 'result[0].values')
+    if (values && values.length > 0) {
+        if (values[0] && values[0].length > 0) {
+            values[0].forEach((v: Array<any>, i: number) => {
+                res.value.push({
+                    time: v[0],
+                    value: parseFloat(v[1])
+                })
+            })
+        }
+    }
+    return res
 }

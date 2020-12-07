@@ -3177,7 +3177,7 @@ hash-base@^3.0.0:
     readable-stream "^3.6.0"
     safe-buffer "^5.2.0"
 
-hash.js@^1.0.0, hash.js@^1.0.3:
+hash.js@^1.0.0:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/hash.js/-/hash.js-1.1.7.tgz#0babca538e8d4ee4a0f8988d68866537a003cf42"
   integrity sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==
@@ -3939,7 +3939,7 @@ minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz#2e194de044626d4a10e7f7fbc00ce73e83e4d5c7"
   integrity sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==
 
-minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1:
+minimalistic-crypto-utils@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-crypto-utils/-/minimalistic-crypto-utils-1.0.1.tgz#f6c00c1c0b082246e5c4d99dfb8c7c083b2b582a"
   integrity sha1-9sAMHAsIIkblxNmd+4x8CDsrWCo=
@@ -5708,10 +5708,10 @@ signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
 
-simple-g2-charts@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/simple-g2-charts/-/simple-g2-charts-1.0.8.tgz#78e6e228e61bb4ad72de161d471bbd721d3b515c"
-  integrity sha512-KUPQ24NvCRAFyMQKsTC5vL9g1/NFnM1p1hiX+BhR/aRWbf9PKYG5RiGj+tBz4UweKC3lkXwzxyBzG/TXzAWlsg==
+simple-g2-charts@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/simple-g2-charts/-/simple-g2-charts-1.0.10.tgz#cec61257ba58a2894383b74489724866cb247e17"
+  integrity sha512-SDq6plfPlKbVDqGuy/SEl7nScrDct3UyV0yeKERPixNm3rKAatXmcrXgfLcKM22MWYeljV4CY+3r7zh9EbreZw==
 
 simple-statistics@^6.1.0:
   version "6.1.1"

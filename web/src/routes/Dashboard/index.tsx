@@ -15,13 +15,16 @@ import lodash from "lodash";
 import { YzAreaChart, YzLongAreaChart } from "simple-g2-charts";
 import { CalendarTwoTone, ClockCircleTwoTone } from "@ant-design/icons";
 import moment from "moment";
+import { assert } from "console";
+import { Subscription } from "rxjs";
+import dashes from "./dashs";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 export interface DashboardProps {}
+const startDate = new Date().getTime() / 1000 - 24 * 60 * 60;
 
 const Dashboard: React.FC<DashboardProps> = () => {
-  const startDate = new Date().getTime() / 1000 - 24 * 60 * 60;
   const [step, setStep] = useState<number>();
   const [start, setStart] = useState<number>();
   const [end, setEnd] = useState<number>();
@@ -84,36 +87,63 @@ const Dashboard: React.FC<DashboardProps> = () => {
   }, [dataObj]);
 
   useEffect(() => {
+    if (!step) {
+      return;
+    }
+    let _needToUnSub: Array<Subscription> = [];
+    _needToUnSub.push(ticktock());
     if (keeping) {
       const t = setInterval(() => {
-        const endDate = new Date().getTime() / 1000;
-        const param = { start: startDate, end: endDate, step };
-        http({
-          url: `/monitoring.kube.io/v1alpha2/redis${makeParam(param)}`,
-          method: HTTP_METHODS.GET,
-        }).subscribe((response: any) => {
-          const dataObj: RedisMetrics = {};
-          response.results.map((rm: any) => {
-            if (METRICS_MAP[rm.metric_name]) {
-              const metric_data = METRICS_MAP[rm.metric_name](rm.data);
-              dataObj[rm.metric_name] = metric_data;
-            }
-          });
-          setDataObj(dataObj);
-        });
-      }, 3000);
+        _needToUnSub.push(ticktock());
+      }, step * 1000);
       setTimer(t);
     }
     return () => {
       clearInterval(timer);
+      if (_needToUnSub && _needToUnSub.length > 0) {
+        _needToUnSub.forEach((ntu) => ntu.unsubscribe());
+      }
     };
   }, [keeping]);
+
+  const ticktock = (): Subscription => {
+    const endDate = new Date().getTime() / 1000;
+    const param = { start: startDate, end: endDate, step };
+    return http({
+      url: `/monitoring.kube.io/v1alpha2/redis${makeParam(param)}`,
+      method: HTTP_METHODS.GET,
+    }).subscribe((response: any) => {
+      console.log(response);
+      const dataObj: RedisMetrics = {};
+      response.results.map((rm: any) => {
+        if (METRICS_MAP[rm.metric_name]) {
+          const metric_data = METRICS_MAP[rm.metric_name](rm.data);
+          dataObj[rm.metric_name] = metric_data;
+        }
+      });
+      setDataObj(dataObj);
+    });
+  };
 
   const getValue = (name: string): Array<any> => {
     if (dataObj && dataObj[name]) {
       return [...dataObj[name].value];
     }
     return [];
+  };
+
+  const renderDashes = () => {
+    return (
+      <Row gutter={16}>
+        {dashes.map((Comp: React.FC<any>, index: number) => {
+          return (
+            <Col style={{ marginTop: 10 }} span={12} key={index}>
+              {Comp({ getValue })}
+            </Col>
+          );
+        })}
+      </Row>
+    );
   };
 
   return (
@@ -170,38 +200,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
           </Col>
         </Row>
       </Card>
-      <br />
-      <Row gutter={16}>
-        <Col span={12}>
-
-          <Card title="redis_cpu_user_seconds_total">
-            <YzLongAreaChart
-              data={getValue("redis_cpu_user_seconds_total")}
-              xindex="time"
-              autoFit={true}
-              height={500}
-              scales={[
-                {
-                  index: "time",
-                  type: "time",
-                  alias: "时间",
-                  tickCount: 20,
-                  mask: "MM/DD HH:mm:ss",
-                },
-                {
-                  index: "value",
-                  alias: "占用时长",
-                  color1: "#a50f15",
-                  color2: "#fee5d9",
-                  formatter: (v) => {
-                    return v + "秒";
-                  },
-                },
-              ]}
-            ></YzLongAreaChart>
-          </Card>
-        </Col>
-      </Row>
+      {renderDashes()}
     </React.Fragment>
   );
 };
