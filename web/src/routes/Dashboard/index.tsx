@@ -109,11 +109,9 @@ const Dashboard: React.FC<DashboardProps> = () => {
     };
   }, [keeping]);
 
-  const redis_cpu_user_seconds_total = (): Array<any> => {
-    if (dataObj && dataObj["redis_cpu_user_seconds_total"]) {
-      return [...dataObj["redis_cpu_user_seconds_total"].value].map((v) => {
-        return { ...v, value: parseFloat(v.value) };
-      });
+  const getValue = (name: string): Array<any> => {
+    if (dataObj && dataObj[name]) {
+      return [...dataObj[name].value];
     }
     return [];
   };
@@ -175,9 +173,10 @@ const Dashboard: React.FC<DashboardProps> = () => {
       <br />
       <Row gutter={16}>
         <Col span={12}>
-          <Card>
+
+          <Card title="redis_cpu_user_seconds_total">
             <YzLongAreaChart
-              data={redis_cpu_user_seconds_total()}
+              data={getValue("redis_cpu_user_seconds_total")}
               xindex="time"
               autoFit={true}
               height={500}
@@ -187,15 +186,15 @@ const Dashboard: React.FC<DashboardProps> = () => {
                   type: "time",
                   alias: "时间",
                   tickCount: 20,
-                  mask: "MM/DD HH:mm",
+                  mask: "MM/DD HH:mm:ss",
                 },
                 {
                   index: "value",
-                  alias: "大小",
+                  alias: "占用时长",
                   color1: "#a50f15",
                   color2: "#fee5d9",
                   formatter: (v) => {
-                    return v + "KB";
+                    return v + "秒";
                   },
                 },
               ]}

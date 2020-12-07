@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-23 15:28:22
- * @LastEditTime: 2020-12-05 09:34:33
+ * @LastEditTime: 2020-12-07 09:37:24
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/web/src/utils/redis_metrics.ts
@@ -77,7 +77,7 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
             values[0].forEach((v: Array<any>, i: number) => {
                 res.value.push({
                     time: v[0],
-                    value: v[1] as number
+                    value: parseFloat(v[1])
                 })
             })
         }
