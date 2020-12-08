@@ -2,7 +2,7 @@
  * @Author: ferried
  * @Email: harlancui@outlook.com
  * @Date: 2020-11-23 15:28:22
- * @LastEditTime: 2020-12-07 16:58:49
+ * @LastEditTime: 2020-12-08 17:17:34
  * @LastEditors: ferried
  * @Description: Basic description
  * @FilePath: /redis-prometheus-dashboard/web/src/utils/redis_metrics.ts
@@ -28,6 +28,7 @@ export interface RedisMetric {
 }
 
 export interface RedisMetricValue {
+    db?: string;
     time: any;
     value: any;
 }
@@ -61,7 +62,7 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
     // "redis_cpu_user_children_seconds_total": null,
     "redis_cpu_user_seconds_total": metric => simpleMetricHandle(metric),
     // "redis_db_avg_ttl_seconds": null,
-    // "redis_db_keys": null,
+    "redis_db_keys": metric => listMetricsHandle(metric),
     // "redis_db_keys_expiring": null,
     // "redis_defrag_hits": null,
     // "redis_defrag_key_hits": null,
@@ -126,13 +127,49 @@ export const METRICS_MAP: RedisMetricHandlerMap = {
     // "redis_uptime_in_seconds": null,
 }
 
+const listMetricsHandle = (metric: Metric): RedisMetric => {
+    let res: RedisMetric = newRedisMetric();
+    copyRedisMetric(res, metric)
+    const mes: Array<Array<any>> = metric.result
+    mes.forEach((me: any) => {
+        me.values.forEach((v: any) => {
+            res.value.push({
+                ...me.metric,
+                time: v[0],
+                value: parseFloat(v[1])
+            })
+        })
+    })
+    return res
+}
+
 const simpleMetricHandle = (metric: Metric): RedisMetric => {
-    let res: RedisMetric = {
+    let res: RedisMetric = newRedisMetric();
+    copyRedisMetric(res, metric)
+    const values: Array<Array<any>> = lodash.at(metric, 'result[0].values')
+    if (values && values.length > 0) {
+        if (values[0] && values[0].length > 0) {
+            values[0].forEach((v: Array<any>, i: number) => {
+                res.value.push({
+                    time: v[0],
+                    value: parseFloat(v[1])
+                })
+            })
+        }
+    }
+    return res
+}
+
+const newRedisMetric = (): RedisMetric => {
+    const res: RedisMetric = {
         endpoint: "",
         instance: "",
         namespace: "",
         value: [],
     }
+    return res
+}
+const copyRedisMetric = (res: RedisMetric, metric: any): void => {
     const pointObj: Array<any> = lodash.at(metric, 'result[0].metric')
     if (pointObj && pointObj.length > 0) {
         if (pointObj[0]) {
@@ -147,16 +184,4 @@ const simpleMetricHandle = (metric: Metric): RedisMetric => {
             }
         }
     }
-    const values: Array<Array<any>> = lodash.at(metric, 'result[0].values')
-    if (values && values.length > 0) {
-        if (values[0] && values[0].length > 0) {
-            values[0].forEach((v: Array<any>, i: number) => {
-                res.value.push({
-                    time: v[0],
-                    value: parseFloat(v[1])
-                })
-            })
-        }
-    }
-    return res
 }

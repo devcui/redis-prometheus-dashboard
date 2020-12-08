@@ -22,7 +22,7 @@ import dashes from "./dashs";
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 export interface DashboardProps {}
-const startDate = new Date().getTime() / 1000 - 24 * 60 * 60;
+const startDate = new Date().getTime() / 1000 - 12 * 60 * 60;
 
 const Dashboard: React.FC<DashboardProps> = () => {
   const [step, setStep] = useState<number>();

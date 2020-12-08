@@ -1,6 +1,7 @@
 import { Col, Card } from "antd";
+import moment from "moment";
 import React from "react";
-import { YzLongAreaChart } from "simple-g2-charts";
+import { YzAreaChart, YzLongAreaChart } from "simple-g2-charts";
 
 const RedisMemoryUsedBytes: React.FC<any> = ({ getValue }) => {
   return (
@@ -10,7 +11,7 @@ const RedisMemoryUsedBytes: React.FC<any> = ({ getValue }) => {
         data={getValue("redis_memory_used_bytes")}
         xindex="time"
         autoFit={true}
-        height={500}
+        height={300}
         scales={[
           {
             index: "time",
@@ -42,7 +43,7 @@ const RedisCpuUserSecondsTotal: React.FC<any> = ({ getValue }) => {
         data={getValue("redis_cpu_user_seconds_total")}
         xindex="time"
         autoFit={true}
-        height={500}
+        height={300}
         scales={[
           {
             index: "time",
@@ -74,7 +75,7 @@ const RedisMemoryUsedLuaBytes: React.FC<any> = ({ getValue }) => {
         data={getValue("redis_memory_used_lua_bytes")}
         xindex="time"
         autoFit={true}
-        height={500}
+        height={300}
         scales={[
           {
             index: "time",
@@ -99,8 +100,34 @@ const RedisMemoryUsedLuaBytes: React.FC<any> = ({ getValue }) => {
   );
 };
 
+const RedisDbKeys: React.FC<any> = ({ getValue }) => {
+  console.log(getValue("redis_db_keys"));
+  return (
+    <Card title="redis_db_keys">
+      <YzAreaChart
+        id="redis_db_keys"
+        height={300}
+        autoFit={true}
+        data={getValue("redis_db_keys")}
+        xname="时间"
+        xindex="time"
+        yname="数量"
+        yindex="value"
+        colorExp="db"
+        xformat={(text) => {
+          const d = new Date(parseFloat(text) * 1000);
+          const m = moment(d).format("YYYY-MM-DD HH:mm");
+          console.log(m)
+          return m;
+        }}
+      />
+    </Card>
+  );
+};
+
 export default [
   RedisMemoryUsedBytes,
   RedisCpuUserSecondsTotal,
   RedisMemoryUsedLuaBytes,
+  RedisDbKeys,
 ];
